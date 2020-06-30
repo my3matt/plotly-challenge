@@ -22,6 +22,7 @@ function buildCharts(sample) {
   d3.json("samples.json").then((data) => {
     //define variables for charts
     var samples = data.samples;
+    //filter data using sample filter created
     var resultArray = samples.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
     var otu_ids = result.otu_ids;
@@ -33,7 +34,7 @@ function buildCharts(sample) {
       margin: { t: 0 },
       hovermode: "closest",
       xaxis: { title: "OTU ID" },
-      margin: { t: 30}
+      margin: { t: 45}
     };
     var bubbleData = [
       {
@@ -53,6 +54,7 @@ function buildCharts(sample) {
     //Prep bar chart by slicing 10 example highest vals 
     //slice vals to order greatest to least
     var yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse();
+    //data type modifications
     var barData = [
       {
         y: yticks,
@@ -63,13 +65,13 @@ function buildCharts(sample) {
         
       }
     ];
-
+    //modify aesthetics 
     var barLayout = {
       title: "Top 10 Bacterium",
-      margin: { t: 50, l: 110 }
+      margin: { t: 60, l: 130 }
       
     };
-
+    //plot
     Plotly.newPlot("bar", barData, barLayout);
   });
 }
