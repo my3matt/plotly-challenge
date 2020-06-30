@@ -5,6 +5,7 @@ function buildMetadata(sample) {
     // Filter the data
     var resultArray = metadata.filter(sampleVal => sampleVal.id == sample);
     var result = resultArray[0];
+    //sample metadata panel
     var PANEL = d3.select("#sample-metadata");
       //clear
     PANEL.html("");
@@ -19,6 +20,7 @@ function buildMetadata(sample) {
 
 function buildCharts(sample) {
   d3.json("samples.json").then((data) => {
+    //define variables for charts
     var samples = data.samples;
     var resultArray = samples.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
@@ -42,13 +44,14 @@ function buildCharts(sample) {
         marker: {
           size: sample_values,
           color: otu_ids,
-          colorscale: "Earth"
+          colorscale: "Inferno"
         }
       }
     ];
-
+    //plot
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
     //Prep bar chart by slicing 10 example highest vals 
+    //slice vals to order greatest to least
     var yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse();
     var barData = [
       {
@@ -57,12 +60,14 @@ function buildCharts(sample) {
         text: otu_labels.slice(0, 10).reverse(),
         type: "bar",
         orientation: "h",
+        
       }
     ];
 
     var barLayout = {
       title: "Top 10 Bacterium",
       margin: { t: 50, l: 110 }
+      
     };
 
     Plotly.newPlot("bar", barData, barLayout);
@@ -70,10 +75,10 @@ function buildCharts(sample) {
 }
 
 function init() {
-  // Grab a reference to the dropdown select element
+  // dropdown select
   var selector = d3.select("#selDataset");
 
-  // Use the list of sample names to populate the select options
+  // populate select using sample data
   d3.json("samples.json").then((data) => {
     var sampleNames = data.names;
 
@@ -84,17 +89,17 @@ function init() {
         .property("value", sample);
     });
 
-    // Use the first sample from the list to build the initial plots
+    // first samples for plot
     var firstSample = sampleNames[0];
     buildCharts(firstSample);
     buildMetadata(firstSample);
   });
 }
-
-function optionChanged(newSample) {
-  // Fetch new data each time a new sample is selected
-  buildCharts(newSample);
-  buildMetadata(newSample);
+  //next sample data
+function optionChanged(nextSample) {
+  // Fetch new data 
+  buildCharts(nextSample);
+  buildMetadata(nextSample);
 }
 
 // Initialize the dashboard
